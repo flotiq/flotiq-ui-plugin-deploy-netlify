@@ -1,0 +1,110 @@
+/* Section Container */
+
+.plugin-dn-container {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 0.5rem;
+}
+
+.plugin-dn-container-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+/* Section Header */
+
+.plugin-dn-header {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Section Button */
+
+.plugin-dn-button {
+  text-align: center;
+  border: 2px solid rgb(0, 199, 183);
+  margin: 20px 0px 10px 0px;
+  cursor: pointer;
+  padding: 5px 20px;
+}
+
+.plugin-dn-button.disabled {
+  border-color: silver;
+  opacity: 0.6;
+  cursor: auto;
+}
+
+.plugin-dn-button:hover {
+  opacity: 0.8;
+}
+
+.plugin-dn-button.disabled {
+  border-color: silver;
+  opacity: 0.6;
+  cursor: auto;
+}
+
+/* Section Logo */
+
+.plugin-dn-logo {
+  width: 90px;
+  margin-left: auto;
+  pointer-events: none;
+  content: url('https://api.flotiq.com/image/0x0/_media-84001101-c254-4879-b77f-cc47ff9b0051.png');
+}
+
+/* Section Status Message */
+
+.plugin-dn-status-message {
+  font-size: 12px;
+  color: rgb(134, 134, 134);
+  margin-bottom: 10px;
+  display: none;
+}
+
+.plugin-dn-status-message.active {
+  display: block;
+}
+
+/* Section Link Preview */
+.plugin-dn-link {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.plugin-dn-link:hover {
+  opacity: 0.8;
+}
+
+/* Theme: dark */
+.mode-dark .plugin-dn-container {
+  background: #020617;
+}
+
+.mode-dark .plugin-dn-header {
+  color: white;
+}
+
+.mode-dark plugin-dn-button {
+  color: white;
+}
+
+.mode-dark .plugin-dn-button {
+  color: white;
+}
+
+.mode-dark .plugin-dn-link {
+  color: #0083fc;
+}
+
+.mode-dark .plugin-dn-status-message {
+  color: #e3e3e3;
+}
+
+.mode-dark .plugin-dn-logo {
+  content: url('https://api.flotiq.com/image/0x0/_media-087ddee7-4769-495a-89e0-43d539206922.png');
+}
