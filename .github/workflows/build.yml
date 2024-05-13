@@ -22,7 +22,7 @@ jobs:
     - run: yarn build
     - name: Create tar from built plugin
       run: | 
-        BUILDFOLDER="build"
+        BUILDFOLDER="dist"
         MANIFEST=$(find ./$BUILDFOLDER -name plugin-manifest.json)
         [ -z $MANIFEST ] && cp plugin-manifest $BUILDFOLDER
         MANIFEST="$BUILDFOLDER/plugin-manifest.json"
