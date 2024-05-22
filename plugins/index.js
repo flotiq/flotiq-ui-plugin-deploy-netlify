@@ -1,10 +1,11 @@
 import { registerFn } from '../common/plugin-element-cache';
 import pluginInfo from '../plugin-manifest.json';
-import { handlePanelPlugin } from './deply-netlify';
+import cssString from 'inline:./sidebar-panel/style/style.css';
+import { handlePanelPlugin } from './sidebar-panel';
 import { handleManagePlugin } from './manage';
-import cssString from 'inline:./deply-netlify/style/style.css';
+import { handleAfterSubmitPlugin } from './form-submit';
 
-registerFn(pluginInfo, (handler) => {
+registerFn(pluginInfo, (handler, _, { toast, getPluginSettings }) => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {
     const style = document.createElement('style');
     style.id = `${pluginInfo.id}-styles`;
@@ -17,5 +18,8 @@ registerFn(pluginInfo, (handler) => {
   );
   handler.on('flotiq.form.sidebar-panel::add', (data) =>
     handlePanelPlugin(data, pluginInfo),
+  );
+  handler.on('flotiq.form::after-submit', (data) =>
+    handleAfterSubmitPlugin(data, toast, getPluginSettings),
   );
 });
