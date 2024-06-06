@@ -1,6 +1,30 @@
 [[_TOC_]]
 
-# Deploy Netlify Plugin
+# About plugin
+
+Netlify is the platform for building highly-performant and dynamic websites, e-commerce stores and web applications. With this plugin, you can easily trigger Netlify builds within Content Object changes on form submission. You will also be able to quickly navigate to your Netlify pages from the Flotiq content editor.
+
+## Plugin outcome
+
+In the sidebar of the Content Object form, you will see a panel with the Netlify build buttons. Once you click the button, a link to preview the page will appear below the button.
+
+<img src=".docs/images/netlify_plugin.png" alt="plugin-item" width="1000"/>
+
+## Configuring plugin
+
+To manage a plugin, you must first add it to your plugins. Click the "+" icon to add the plugin to your library and click the "Manage" button. It will open the plugin settings.
+
+<img src=".docs/images/netlify_settings.png" alt="plugin-settings" width="700"/>
+
+To complete the form, you must log in to your Netlify account. In the app's general data, under the app name, you'll find the `Build Instance URL`.
+
+<img src=".docs/images/app_url.png" alt="instance-url" width="700"/>
+
+To find `Build Webhook URL` go to `Site Configuration` -> `Build & deploy` -> `Build hooks`. You need to add a build hook and copy the provided URL.
+
+<img src=".docs/images/hook_url.png" alt="hook-url" width="1000"/>
+
+# Development
 
 ## Quick start
 
