@@ -24,6 +24,11 @@ To find `Build Webhook URL` go to `Site Configuration` -> `Build & deploy` -> `B
 
 <img src=".docs/images/hook_url.png" alt="hook-url" width="1000"/>
 
+Other fields:
+
+* `Display name` - Any name that will be displayed on the build button.
+* `Content Type Definition` - Select the content type to display the button only for the specified content type. If the content type is not selected, the button will be shown when editing each content object.
+
 # Development
 
 ## Quick start
