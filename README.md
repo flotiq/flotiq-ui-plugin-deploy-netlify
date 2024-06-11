@@ -1,5 +1,3 @@
-[[_TOC_]]
-
 # About plugin
 
 Netlify is the platform for building highly-performant and dynamic websites, e-commerce stores and web applications. With this plugin, you can easily trigger Netlify builds within Content Object changes on form submission. You will also be able to quickly navigate to your Netlify pages from the Flotiq content editor.
