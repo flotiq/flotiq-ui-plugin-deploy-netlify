@@ -1,8 +1,8 @@
 {
   "id": "flotiq.deploy-netlify",
   "name": "Deploy Netlify",
-  "description": "Integration with Netlify",
-  "version": "1.1.0",
+  "description": "Integration with Netlify deploy. With this plugin, you can easily trigger Netlify builds within Content Object changes on form submission. You will also be able to quickly navigate to your Netlify pages from the Flotiq content editor.",
+  "version": "1.1.1",
   "repository": "https://github.com/flotiq/flotiq-ui-plugin-deploy-netlify",
   "url": "https://localhost:3053/index.js",
   "permissions": []
