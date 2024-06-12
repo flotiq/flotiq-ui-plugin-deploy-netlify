@@ -3,9 +3,8 @@ import pluginInfo from '../plugin-manifest.json';
 import cssString from 'inline:./sidebar-panel/style/style.css';
 import { handlePanelPlugin } from './sidebar-panel';
 import { handleManagePlugin } from './manage';
-import { handleAfterSubmitPlugin } from './form-submit';
 
-registerFn(pluginInfo, (handler, _, { toast, getPluginSettings }) => {
+registerFn(pluginInfo, (handler, _) => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {
     const style = document.createElement('style');
     style.id = `${pluginInfo.id}-styles`;
@@ -18,8 +17,5 @@ registerFn(pluginInfo, (handler, _, { toast, getPluginSettings }) => {
   );
   handler.on('flotiq.form.sidebar-panel::add', (data) =>
     handlePanelPlugin(data, pluginInfo),
-  );
-  handler.on('flotiq.form::after-submit', (data) =>
-    handleAfterSubmitPlugin(data, toast, getPluginSettings),
   );
 });

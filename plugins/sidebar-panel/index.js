@@ -88,7 +88,7 @@ const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
   }
 
   // :: Message
-  if (data?.build_instance_url) {
+  if (data?.build_instance_url && !isDisabled) {
     writeMessage(
       `<a class="plugin-dn-link" href="${data?.build_instance_url} "` +
         `target="_blank">Go to page: ${data?.build_instance_url}</a>`,
