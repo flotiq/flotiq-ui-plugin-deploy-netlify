@@ -16,29 +16,32 @@ export const handleAfterSubmitPlugin = (
 
   if (!settingsForCtd.length) return null;
 
-  settingsForCtd.map((item) =>
-    fetch(item.build_webhook_url, {
-      method: `POST`,
-      body: '{}',
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-      },
-    })
-      .then(async ({ ok, status }) => {
-        if (!ok)
-          throw Error(
-            `Failed to fetch Netlify build URL: ${item.build_instance_url}. Status: ${status}`,
-          );
+  settingsForCtd.map(
+    (item) =>
+      item.buildAutomaticallyOnSave &&
+      fetch(item.build_webhook_url, {
+        mode: 'no-cors',
+        method: `POST`,
+        body: JSON.stringify(contentObject),
+        headers: {
+          'content-type': 'application/json;charset=UTF-8',
+        },
       })
-      .catch((error) => {
-        console.log(error);
-        if (error.message) {
-          toast.error(error.message);
-        } else {
-          toast.error(
-            `Failed to fetch Netlify build URL: ${item.build_instance_url}`,
-          );
-        }
-      }),
+        .then(async ({ ok, status }) => {
+          if (!ok)
+            throw Error(
+              `Failed to fetch Netlify build URL: ${item.build_instance_url}. Status: ${status}`,
+            );
+        })
+        .catch((error) => {
+          console.log(error);
+          if (error.message) {
+            toast.error(error.message);
+          } else {
+            toast.error(
+              `Failed to fetch Netlify build URL: ${item.build_instance_url}`,
+            );
+          }
+        }),
   );
 };

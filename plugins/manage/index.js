@@ -50,6 +50,10 @@ export const handleManagePlugin = (
                     type: 'string',
                     default: 'Build site',
                   },
+                  buildAutomaticallyOnSave: {
+                    type: 'boolean',
+                    default: true,
+                  },
                 },
               },
             },
@@ -69,10 +73,11 @@ export const handleManagePlugin = (
               'build_webhook_url',
               'displayName',
               'content_types',
+              'buildAutomaticallyOnSave',
             ],
             propertiesConfig: {
               build_instance_url: {
-                label: 'Build Instance URL',
+                label: 'Site url',
                 unique: false,
                 helpText: '',
                 inputType: 'text',
@@ -96,6 +101,12 @@ export const handleManagePlugin = (
                 unique: false,
                 helpText: '',
                 inputType: 'text',
+              },
+              buildAutomaticallyOnSave: {
+                label: 'Build automatically on save',
+                unique: false,
+                helpText: '',
+                inputType: 'checkbox',
               },
             },
           },

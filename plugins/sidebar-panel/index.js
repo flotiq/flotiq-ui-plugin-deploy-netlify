@@ -3,9 +3,16 @@ import {
   getCachedElement,
 } from '../../common/plugin-element-cache';
 
-const onBuildHandler = (data, statusMessageContainer) => {
+import { deepReadKeyValue } from '../../common/plugin-helpers';
+
+const netlifyBuildRef = { isUpdated: false, item: {} };
+
+const onBuildHandler = (data, statusMessageContainer, object, buttonId) => {
   const buildWebhookURL = data?.build_webhook_url;
   const buildInstance = data?.build_instance_url;
+
+  const buttonElement = document.getElementById(buttonId);
+  buttonElement.classList.add('loading');
 
   writeMessage('Updating preview link...', statusMessageContainer);
 
@@ -18,17 +25,19 @@ const onBuildHandler = (data, statusMessageContainer) => {
   }
 
   return fetch(buildWebhookURL, {
-    method: `POST`,
-    body: '{}',
+    mode: 'no-cors',
+    method: 'POST',
+    body: JSON.stringify(object),
     headers: {
       'content-type': 'application/json;charset=UTF-8',
     },
   })
     .then(() => {
       writeMessage(
-        `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Open page (build may be still pending)</a>`,
+        `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Go to page: ${buildInstance}</a>`,
         statusMessageContainer,
       );
+      buttonElement.classList.remove('loading');
     })
     .catch((error) => {
       if (error.message) {
@@ -36,6 +45,7 @@ const onBuildHandler = (data, statusMessageContainer) => {
       } else {
         writeMessage('Failed to fetch', statusMessageContainer);
       }
+      buttonElement.classList.remove('loading');
     });
 };
 
@@ -44,19 +54,46 @@ const writeMessage = (message, statusMessageContainer) => {
   statusMessageContainer.style.display = 'block';
 };
 
-const itemNetlify = (data) => {
+const getKeyPattern = (value, source) => {
+  return value.replace(/{(?<key>[^{}]+)}/g, (...params) => {
+    const { key } = params[4];
+    return deepReadKeyValue(key, source);
+  });
+};
+
+const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
   const pluginContainerItem = document.createElement('div');
   pluginContainerItem.classList.add('plugin-dn-container-item');
 
   // :: Status
   const statusMessageContainer = document.createElement('div');
+  statusMessageContainer.id = `statusMessageContainer-${id}`;
   statusMessageContainer.classList.add('plugin-dn-status-message');
 
   // :: Button
   const pluginButton = document.createElement('button');
+  pluginButton.id = `button-${id}`;
   pluginButton.classList.add('plugin-dn-button');
   pluginButton.innerText = data?.displayName || 'Build site';
-  pluginButton.onclick = () => onBuildHandler(data, statusMessageContainer);
+  pluginButton.onclick = () =>
+    onBuildHandler(data, statusMessageContainer, object, `button-${id}`);
+
+  // :: Button disabled status
+  if (isDisabled) {
+    pluginButton.classList.add('disabled');
+  } else {
+    pluginButton.classList.remove('disabled');
+  }
+
+  // :: Build on save
+  if (data.buildAutomaticallyOnSave && object && isUpdated) {
+    clearTimeout(netlifyBuildRef.item[id]);
+
+    netlifyBuildRef.item[id] = setTimeout(() => {
+      onBuildHandler(data, statusMessageContainer, object, `button-${id}`);
+      netlifyBuildRef.isUpdated = false;
+    }, 1000);
+  }
 
   // :: Images
   const imgLogo = document.createElement('img');
@@ -69,7 +106,7 @@ const itemNetlify = (data) => {
   pluginContainerItem.appendChild(statusMessageContainer);
   pluginContainerItem.appendChild(imgLogo);
 
-  // :: Checking if build instante
+  // :: Checking if build instance
   const buildInstance = data?.build_instance_url;
 
   if (!buildInstance) {
@@ -84,9 +121,14 @@ const itemNetlify = (data) => {
 };
 
 export const handlePanelPlugin = (
-  { contentType, contentObject, userPlugins },
+  { contentType, contentObject, userPlugins, create, isSaving },
   pluginInfo,
 ) => {
+  // On save reference
+  if (isSaving && !netlifyBuildRef.isUpdated) {
+    netlifyBuildRef.isUpdated = true;
+  }
+
   const netlifySettings = userPlugins?.find(
     ({ id }) => id === pluginInfo.id,
   )?.settings;
@@ -101,13 +143,13 @@ export const handlePanelPlugin = (
 
   if (!settingsForCtd.length) return null;
 
-  const cacheKey = `${pluginInfo.id}-${contentType?.name}-${
+  let cacheKey = `${pluginInfo.id}-${contentType?.name}-${
     contentObject?.id || 'new'
   }`;
 
   let pluginContainer = getCachedElement(cacheKey)?.element;
 
-  if (!pluginContainer) {
+  if (!pluginContainer || netlifyBuildRef.isUpdated || create) {
     pluginContainer = document.createElement('div');
     pluginContainer.classList.add('plugin-dn-container');
 
@@ -118,7 +160,30 @@ export const handlePanelPlugin = (
 
     pluginContainer.appendChild(headerElement);
 
-    const items = settingsForCtd.map((item) => itemNetlify(item));
+    // Case: disable buttons on create item
+    const isDisabled = create;
+
+    const items = settingsForCtd.map((item, index) => {
+      return itemNetlify(
+        {
+          ...item,
+          build_instance_url: getKeyPattern(
+            item.build_instance_url,
+            contentObject,
+          ),
+          build_webhook_url: getKeyPattern(
+            item.build_webhook_url,
+            contentObject,
+          ),
+          displayName: getKeyPattern(item.displayName, contentObject),
+        },
+        contentObject,
+        netlifyBuildRef.isUpdated,
+        `netlify-item-child-${index}`,
+        isDisabled,
+      );
+    });
+
     pluginContainer.append(...items);
 
     addElementToCache(pluginContainer, cacheKey);

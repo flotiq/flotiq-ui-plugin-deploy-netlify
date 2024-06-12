@@ -31,20 +31,34 @@
   padding: 5px 20px;
 }
 
-.plugin-dn-button.disabled {
-  border-color: silver;
-  opacity: 0.6;
-  cursor: auto;
-}
-
 .plugin-dn-button:hover {
   opacity: 0.8;
 }
 
+.plugin-dn-button.loading,
 .plugin-dn-button.disabled {
   border-color: silver;
-  opacity: 0.6;
+  opacity: 0.3;
   cursor: auto;
+  pointer-events: none;
+  position: relative;
+}
+
+.plugin-dn-button.loading {
+  opacity: 1;
+}
+
+.plugin-dn-button.loading:after {
+  content: ' ';
+  border: 2px solid #f3f3f3;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 2px solid #0083fc;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 10px;
 }
 
 /* Section Logo */
