@@ -18,7 +18,8 @@ const onBuildHandler = (data, statusMessageContainer, object, buttonId) => {
 
   if (!buildWebhookURL) {
     writeMessage(
-      `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Open page (build may be still pending)</a>`,
+      `<a class="plugin-dn-link" href="${buildInstance}" ` +
+        `target="_blank">Open page (build may be still pending)</a>`,
       statusMessageContainer,
     );
     return;
@@ -34,7 +35,8 @@ const onBuildHandler = (data, statusMessageContainer, object, buttonId) => {
   })
     .then(() => {
       writeMessage(
-        `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Go to page: ${buildInstance}</a>`,
+        `<a class="plugin-dn-link" href="${buildInstance} ` +
+          `target="_blank">Go to page: ${buildInstance}</a>`,
         statusMessageContainer,
       );
       buttonElement.classList.remove('loading');
@@ -83,6 +85,15 @@ const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
     pluginButton.classList.add('disabled');
   } else {
     pluginButton.classList.remove('disabled');
+  }
+
+  // :: Message
+  if (data?.build_instance_url) {
+    writeMessage(
+      `<a class="plugin-dn-link" href="${data?.build_instance_url} "` +
+        `target="_blank">Go to page: ${data?.build_instance_url}</a>`,
+      statusMessageContainer,
+    );
   }
 
   // :: Build on save
