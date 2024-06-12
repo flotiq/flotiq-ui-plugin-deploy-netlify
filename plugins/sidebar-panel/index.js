@@ -59,7 +59,7 @@ const writeMessage = (message, statusMessageContainer) => {
 const getKeyPattern = (value, source) => {
   return value.replace(/{(?<key>[^{}]+)}/g, (...params) => {
     const { key } = params[4];
-    return deepReadKeyValue(key, source);
+    return deepReadKeyValue(key, source) || '';
   });
 };
 
