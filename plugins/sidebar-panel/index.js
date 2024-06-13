@@ -5,7 +5,7 @@ import {
 
 import { deepReadKeyValue } from '../../common/plugin-helpers';
 
-const netlifyBuildRef = { isUpdated: false, item: {} };
+const netlifyBuildRef = { isAfterSubmit: false, item: {} };
 
 const onBuildHandler = (data, statusMessageContainer, object, buttonId) => {
   const buildWebhookURL = data?.build_webhook_url;
@@ -63,7 +63,7 @@ const getKeyPattern = (value, source) => {
   });
 };
 
-const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
+const itemNetlify = (data, object, isAfterSubmit, id, isDisabled) => {
   const pluginContainerItem = document.createElement('div');
   pluginContainerItem.classList.add('plugin-dn-container-item');
 
@@ -97,13 +97,13 @@ const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
   }
 
   // :: Build on save
-  if (data.buildAutomaticallyOnSave && object && isUpdated) {
+  if (data.buildAutomaticallyOnSave && object && isAfterSubmit) {
     clearTimeout(netlifyBuildRef.item[id]);
 
     netlifyBuildRef.item[id] = setTimeout(() => {
       onBuildHandler(data, statusMessageContainer, object, `button-${id}`);
-      netlifyBuildRef.isUpdated = false;
-    }, 1000);
+      netlifyBuildRef.isAfterSubmit = false;
+    }, 50);
   }
 
   // :: Images
@@ -132,12 +132,12 @@ const itemNetlify = (data, object, isUpdated, id, isDisabled) => {
 };
 
 export const handlePanelPlugin = (
-  { contentType, contentObject, userPlugins, create, isSaving },
+  { contentType, contentObject, userPlugins, create, isAfterSubmit },
   pluginInfo,
 ) => {
-  // On save reference
-  if (isSaving && !netlifyBuildRef.isUpdated) {
-    netlifyBuildRef.isUpdated = true;
+  // On submit reference
+  if (isAfterSubmit && !netlifyBuildRef.isAfterSubmit) {
+    netlifyBuildRef.isAfterSubmit = true;
   }
 
   const netlifySettings = userPlugins?.find(
@@ -160,14 +160,14 @@ export const handlePanelPlugin = (
 
   let pluginContainer = getCachedElement(cacheKey)?.element;
 
-  if (!pluginContainer || netlifyBuildRef.isUpdated || create) {
+  if (!pluginContainer || netlifyBuildRef.isAfterSubmit || create) {
     pluginContainer = document.createElement('div');
     pluginContainer.classList.add('plugin-dn-container');
 
     const headerElement = document.createElement('span');
     headerElement.classList.add('plugin-dn-header');
     headerElement.id = 'plugin-dn-header';
-    headerElement.innerText = 'Netlify Builds';
+    headerElement.innerText = 'Netlify Builds 3';
 
     pluginContainer.appendChild(headerElement);
 
@@ -175,6 +175,7 @@ export const handlePanelPlugin = (
     const isDisabled = create;
 
     const items = settingsForCtd.map((item, index) => {
+      const itemUniqueID = `netlify-item-child-${index}`;
       return itemNetlify(
         {
           ...item,
@@ -189,8 +190,8 @@ export const handlePanelPlugin = (
           displayName: getKeyPattern(item.displayName, contentObject),
         },
         contentObject,
-        netlifyBuildRef.isUpdated,
-        `netlify-item-child-${index}`,
+        netlifyBuildRef.isAfterSubmit,
+        itemUniqueID,
         isDisabled,
       );
     });
