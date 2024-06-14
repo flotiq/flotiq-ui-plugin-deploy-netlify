@@ -154,7 +154,7 @@ export const handlePanelPlugin = (
 
   if (!settingsForCtd.length) return null;
 
-  let cacheKey = `${pluginInfo.id}-${contentType?.name}-${
+  const cacheKey = `${pluginInfo.id}-${contentType?.name}-${
     contentObject?.id || 'new'
   }`;
 
