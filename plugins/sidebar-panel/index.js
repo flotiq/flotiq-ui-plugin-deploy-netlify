@@ -167,7 +167,7 @@ export const handlePanelPlugin = (
     const headerElement = document.createElement('span');
     headerElement.classList.add('plugin-dn-header');
     headerElement.id = 'plugin-dn-header';
-    headerElement.innerText = 'Netlify Builds 3';
+    headerElement.innerText = 'Netlify Builds';
 
     pluginContainer.appendChild(headerElement);
 
