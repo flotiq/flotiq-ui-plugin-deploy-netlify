@@ -9,7 +9,6 @@ const settingsMigrations = [
         if (typeof itemSettings.build_on_save === 'undefined') {
           itemSettings.build_on_save = true;
         }
-        return itemSettings;
       });
 
       return settings;
