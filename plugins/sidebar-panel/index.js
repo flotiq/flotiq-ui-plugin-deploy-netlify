@@ -2,123 +2,59 @@ import {
   addElementToCache,
   getCachedElement,
 } from '../../common/plugin-element-cache';
+import { getKeyPattern } from '../../common/plugin-helpers';
 
-import { deepReadKeyValue } from '../../common/plugin-helpers';
+import { onBuildHandler } from '../build-handler';
 
-const netlifyBuildRef = { isAfterSubmit: false, item: {} };
+const itemNetlify = (buttonSettings, contentObject, id, isCreating) => {
+  const buildInstance = getKeyPattern(
+    buttonSettings?.build_instance_url,
+    contentObject,
+  );
+  const buttonLabel = getKeyPattern(
+    buttonSettings?.displayName || 'Build site',
+    contentObject,
+  );
 
-const onBuildHandler = (data, statusMessageContainer, object, buttonId) => {
-  const buildWebhookURL = data?.build_webhook_url;
-  const buildInstance = data?.build_instance_url;
-
-  const buttonElement = document.getElementById(buttonId);
-  buttonElement.classList.add('loading');
-
-  writeMessage('Updating preview link...', statusMessageContainer);
-
-  if (!buildWebhookURL) {
-    writeMessage(
-      `<a class="plugin-dn-link" href="${buildInstance}" ` +
-        `target="_blank">Open page (build may be still pending)</a>`,
-      statusMessageContainer,
-    );
-    return;
-  }
-
-  return fetch(buildWebhookURL, {
-    mode: 'no-cors',
-    method: 'POST',
-    body: JSON.stringify(object),
-    headers: {
-      'content-type': 'application/json;charset=UTF-8',
-    },
-  })
-    .then(() => {
-      writeMessage(
-        `<a class="plugin-dn-link" href="${buildInstance} ` +
-          `target="_blank">Go to page: ${buildInstance}</a>`,
-        statusMessageContainer,
-      );
-      buttonElement.classList.remove('loading');
-    })
-    .catch((error) => {
-      if (error.message) {
-        writeMessage(error.message, statusMessageContainer);
-      } else {
-        writeMessage('Failed to fetch', statusMessageContainer);
-      }
-      buttonElement.classList.remove('loading');
-    });
-};
-
-const writeMessage = (message, statusMessageContainer) => {
-  statusMessageContainer.innerHTML = message || '';
-  statusMessageContainer.style.display = 'block';
-};
-
-const getKeyPattern = (value, source) => {
-  return value.replace(/{(?<key>[^{}]+)}/g, (...params) => {
-    const { key } = params[4];
-    return deepReadKeyValue(key, source) || '';
-  });
-};
-
-const itemNetlify = (data, object, isAfterSubmit, id, isDisabled) => {
   const pluginContainerItem = document.createElement('div');
   pluginContainerItem.classList.add('plugin-dn-container-item');
 
   // :: Status
   const statusMessageContainer = document.createElement('div');
-  statusMessageContainer.id = `statusMessageContainer-${id}`;
+  statusMessageContainer.id = `${id}-status`;
   statusMessageContainer.classList.add('plugin-dn-status-message');
 
   // :: Button
   const pluginButton = document.createElement('button');
-  pluginButton.id = `button-${id}`;
+  pluginButton.id = `${id}-button`;
   pluginButton.classList.add('plugin-dn-button');
-  pluginButton.innerText = data?.displayName || 'Build site';
+  pluginButton.innerText = buttonLabel;
   pluginButton.onclick = () =>
-    onBuildHandler(data, statusMessageContainer, object, `button-${id}`);
+    onBuildHandler(buttonSettings, contentObject, id);
 
   // :: Button disabled status
-  if (isDisabled) {
+  if (isCreating) {
     pluginButton.classList.add('disabled');
   } else {
     pluginButton.classList.remove('disabled');
   }
 
   // :: Message
-  if (data?.build_instance_url && !isDisabled) {
-    writeMessage(
-      `<a class="plugin-dn-link" href="${data?.build_instance_url} "` +
-        `target="_blank">Go to page: ${data?.build_instance_url}</a>`,
-      statusMessageContainer,
-    );
+  if (buildInstance && !isCreating) {
+    statusMessageContainer.innerHTML = `
+      <a 
+        class="plugin-dn-link" 
+        href="${buildInstance}" 
+        target="_blank">
+          Go to page: ${buildInstance}
+      </a>`;
   }
-
-  // :: Build on save
-  if (data.buildAutomaticallyOnSave && object && isAfterSubmit) {
-    clearTimeout(netlifyBuildRef.item[id]);
-
-    netlifyBuildRef.item[id] = setTimeout(() => {
-      onBuildHandler(data, statusMessageContainer, object, `button-${id}`);
-      netlifyBuildRef.isAfterSubmit = false;
-    }, 50);
-  }
-
-  // :: Images
-  const imgLogo = document.createElement('img');
-  imgLogo.classList.add('plugin-dn-logo');
-
-  imgLogo.alt = 'Logo Netlify';
 
   // :: Append new elements
   pluginContainerItem.appendChild(pluginButton);
   pluginContainerItem.appendChild(statusMessageContainer);
-  pluginContainerItem.appendChild(imgLogo);
 
   // :: Checking if build instance
-  const buildInstance = data?.build_instance_url;
 
   if (!buildInstance) {
     pluginButton.classList.add('disabled');
@@ -132,35 +68,31 @@ const itemNetlify = (data, object, isAfterSubmit, id, isDisabled) => {
 };
 
 export const handlePanelPlugin = (
-  { contentType, contentObject, userPlugins, create, isAfterSubmit },
+  { contentType, contentObject, create, duplicate },
+  getPluginSettings,
   pluginInfo,
 ) => {
-  // On submit reference
-  if (isAfterSubmit && !netlifyBuildRef.isAfterSubmit) {
-    netlifyBuildRef.isAfterSubmit = true;
-  }
-
-  const netlifySettings = userPlugins?.find(
-    ({ id }) => id === pluginInfo.id,
-  )?.settings;
+  const netlifySettings = getPluginSettings();
 
   if (!netlifySettings) return null;
+  const settings = JSON.parse(netlifySettings);
 
-  const settingsForCtd = JSON.parse(netlifySettings)?.builds?.filter(
+  const settingsForCtd = settings?.builds?.filter(
     (plugin) =>
       plugin.content_types.length === 0 ||
       plugin.content_types.find((ctd) => ctd === contentType?.name),
   );
 
   if (!settingsForCtd.length) return null;
+  const isCreating = duplicate || create;
 
   const cacheKey = `${pluginInfo.id}-${contentType?.name}-${
-    contentObject?.id || 'new'
+    isCreating ? contentObject?.id : 'new'
   }`;
 
   let pluginContainer = getCachedElement(cacheKey)?.element;
 
-  if (!pluginContainer || netlifyBuildRef.isAfterSubmit || create) {
+  if (!pluginContainer || isCreating) {
     pluginContainer = document.createElement('div');
     pluginContainer.classList.add('plugin-dn-container');
 
@@ -170,35 +102,22 @@ export const handlePanelPlugin = (
     headerElement.innerText = 'Netlify Builds';
 
     pluginContainer.appendChild(headerElement);
+    addElementToCache(pluginContainer, cacheKey);
 
     // Case: disable buttons on create item
-    const isDisabled = create;
-
     const items = settingsForCtd.map((item, index) => {
       const itemUniqueID = `netlify-item-child-${index}`;
-      return itemNetlify(
-        {
-          ...item,
-          build_instance_url: getKeyPattern(
-            item.build_instance_url,
-            contentObject,
-          ),
-          build_webhook_url: getKeyPattern(
-            item.build_webhook_url,
-            contentObject,
-          ),
-          displayName: getKeyPattern(item.displayName, contentObject),
-        },
-        contentObject,
-        netlifyBuildRef.isAfterSubmit,
-        itemUniqueID,
-        isDisabled,
-      );
+      return itemNetlify(item, contentObject, itemUniqueID, isCreating);
     });
 
     pluginContainer.append(...items);
 
-    addElementToCache(pluginContainer, cacheKey);
+    const imgLogo = document.createElement('img');
+    imgLogo.classList.add('plugin-dn-logo');
+
+    imgLogo.alt = 'Logo Netlify';
+
+    pluginContainer.appendChild(imgLogo);
   }
 
   return pluginContainer;

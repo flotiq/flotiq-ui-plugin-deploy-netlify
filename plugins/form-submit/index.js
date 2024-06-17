@@ -1,15 +1,29 @@
-import { handlePanelPlugin } from './../sidebar-panel';
+import { onBuildHandler } from '../build-handler';
 
-export const handleAfterSubmitPlugin = (
-  data,
-  getPluginSettings,
-  pluginInfo,
-) => {
+export const handleAfterSubmitPlugin = (data, getPluginSettings) => {
   const { success, contentObject } = data;
   const ctdName = contentObject?.internal?.contentType;
-  const settings = getPluginSettings();
+  const netlifySettings = getPluginSettings();
 
-  if (!success || !ctdName || !settings) return;
+  if (!success || !ctdName || !netlifySettings) return;
 
-  handlePanelPlugin({ ...data, isAfterSubmit: true }, pluginInfo);
+  const settings = JSON.parse(netlifySettings);
+
+  const settingsForCtd = settings?.builds
+    ?.filter(
+      (buttonSettings) =>
+        buttonSettings.content_types.length === 0 ||
+        buttonSettings.content_types.find((ctd) => ctd === ctdName),
+    )
+    .filter((buttonSettings) => buttonSettings.build_on_save);
+
+  if (!settingsForCtd.length) return;
+
+  settingsForCtd.forEach((buttonSettings, index) => {
+    onBuildHandler(
+      buttonSettings,
+      contentObject,
+      `netlify-item-child-${index}`,
+    );
+  });
 };

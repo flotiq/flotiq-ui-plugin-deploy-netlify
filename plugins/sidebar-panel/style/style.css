@@ -19,6 +19,7 @@
 .plugin-dn-header {
   font-weight: 700;
   font-size: 16px;
+  margin-bottom: 1rem;
 }
 
 /* Section Button */
@@ -26,7 +27,8 @@
 .plugin-dn-button {
   text-align: center;
   border: 2px solid rgb(0, 199, 183);
-  margin: 20px 0px 10px 0px;
+  border-radius: 0.5rem;
+  margin: 5px 0px 10px 0px;
   cursor: pointer;
   padding: 5px 20px;
 }
@@ -65,6 +67,7 @@
 
 .plugin-dn-logo {
   width: 90px;
+  margin-top: 5px;
   margin-left: auto;
   pointer-events: none;
   content: url('https://api.flotiq.com/image/0x0/_media-84001101-c254-4879-b77f-cc47ff9b0051.png');
@@ -76,7 +79,6 @@
   font-size: 12px;
   color: rgb(134, 134, 134);
   margin-bottom: 10px;
-  display: none;
 }
 
 .plugin-dn-status-message.active {

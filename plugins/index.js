@@ -4,6 +4,7 @@ import cssString from 'inline:./sidebar-panel/style/style.css';
 import { handlePanelPlugin } from './sidebar-panel';
 import { handleManagePlugin } from './manage';
 import { handleAfterSubmitPlugin } from './form-submit';
+import { handleMigrate } from './migrations';
 
 registerFn(pluginInfo, (handler, _, { getPluginSettings }) => {
   if (!document.getElementById(`${pluginInfo.id}-styles`)) {
@@ -20,9 +21,11 @@ registerFn(pluginInfo, (handler, _, { getPluginSettings }) => {
     handleManagePlugin(data, pluginInfo),
   );
   handler.on('flotiq.form.sidebar-panel::add', (data) =>
-    handlePanelPlugin(data, pluginInfo),
+    handlePanelPlugin(data, getPluginSettings, pluginInfo),
   );
   handler.on('flotiq.form::after-submit', (data) =>
     handleAfterSubmitPlugin(data, getPluginSettings, pluginInfo),
   );
+
+  handler.on('flotiq.plugin::migrate', handleMigrate);
 });
