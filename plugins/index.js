@@ -7,15 +7,13 @@ import { handleAfterSubmitPlugin } from './form-submit';
 import { handleMigrate } from './migrations';
 
 registerFn(pluginInfo, (handler, _, { getPluginSettings }) => {
-  if (!document.getElementById(`${pluginInfo.id}-styles`)) {
-    const style = document.createElement('style');
+  let style = document.getElementById(`${pluginInfo.id}-styles`);
+  if (!style) {
+    style = document.createElement('style');
     style.id = `${pluginInfo.id}-styles`;
-    style.textContent = cssString;
     document.head.appendChild(style);
-  } else {
-    const style = document.getElementById(`${pluginInfo.id}-styles`);
-    style.textContent = cssString;
   }
+  style.textContent = cssString;
 
   handler.on('flotiq.plugins.manage::form-schema', (data) =>
     handleManagePlugin(data, pluginInfo),
