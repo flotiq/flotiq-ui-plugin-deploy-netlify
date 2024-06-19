@@ -2,127 +2,92 @@ import {
   addElementToCache,
   getCachedElement,
 } from '../../common/plugin-element-cache';
+import { createNetlifyItem, updateNetlifyItem } from './panel-button';
 
-const onBuildHandler = (data, statusMessageContainer) => {
-  const buildWebhookURL = data?.build_webhook_url;
-  const buildInstance = data?.build_instance_url;
+const createPanelElement = (cacheKey) => {
+  const panelElement = document.createElement('div');
+  panelElement.classList.add('plugin-deploy-netlify');
+  panelElement.id = cacheKey;
+  panelElement.innerHTML = /*html*/ `
+    <span id="plugin-deploy-netlify__header" class="plugin-deploy-netlify__header">
+      Netlify builds
+    </span>
+    <div class="plugin-deploy-netlify__button-list"></div>
+    <img class="plugin-deploy-netlify__logo" alt="Logo Netlify">
+  `;
 
-  writeMessage('Updating preview link...', statusMessageContainer);
+  addElementToCache(panelElement, cacheKey);
 
-  if (!buildWebhookURL) {
-    writeMessage(
-      `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Open page (build may be still pending)</a>`,
-      statusMessageContainer,
+  return panelElement;
+};
+
+const updatePanelElement = (
+  pluginContainer,
+  settingsForCtd,
+  contentObject,
+  isCreating,
+) => {
+  const buttonList = pluginContainer.querySelector(
+    '.plugin-deploy-netlify__button-list',
+  );
+  settingsForCtd.forEach((buttonSettings, index) => {
+    const itemUniqueID = `netlify-item-child-${index}`;
+    let htmlItem = buttonList.children[index];
+    if (!htmlItem) {
+      htmlItem = createNetlifyItem(itemUniqueID);
+      buttonList.appendChild(htmlItem);
+    }
+    updateNetlifyItem(
+      htmlItem,
+      buttonSettings,
+      contentObject,
+      itemUniqueID,
+      isCreating,
     );
-    return;
+    return htmlItem;
+  });
+
+  // Remove unnecessary items
+  while (settingsForCtd.length < buttonList.children.length) {
+    buttonList.children[buttonList.children.length - 1].remove();
   }
-
-  return fetch(buildWebhookURL, {
-    method: `POST`,
-    body: '{}',
-    headers: {
-      'content-type': 'application/json;charset=UTF-8',
-    },
-  })
-    .then(() => {
-      writeMessage(
-        `<a class="plugin-dn-link" href="${buildInstance}" target="_blank">Open page (build may be still pending)</a>`,
-        statusMessageContainer,
-      );
-    })
-    .catch((error) => {
-      if (error.message) {
-        writeMessage(error.message, statusMessageContainer);
-      } else {
-        writeMessage('Failed to fetch', statusMessageContainer);
-      }
-    });
-};
-
-const writeMessage = (message, statusMessageContainer) => {
-  statusMessageContainer.innerHTML = message || '';
-  statusMessageContainer.style.display = 'block';
-};
-
-const itemNetlify = (data) => {
-  const pluginContainerItem = document.createElement('div');
-  pluginContainerItem.classList.add('plugin-dn-container-item');
-
-  // :: Status
-  const statusMessageContainer = document.createElement('div');
-  statusMessageContainer.classList.add('plugin-dn-status-message');
-
-  // :: Button
-  const pluginButton = document.createElement('button');
-  pluginButton.classList.add('plugin-dn-button');
-  pluginButton.innerText = data?.displayName || 'Build site';
-  pluginButton.onclick = () => onBuildHandler(data, statusMessageContainer);
-
-  // :: Images
-  const imgLogo = document.createElement('img');
-  imgLogo.classList.add('plugin-dn-logo');
-
-  imgLogo.alt = 'Logo Netlify';
-
-  // :: Append new elements
-  pluginContainerItem.appendChild(pluginButton);
-  pluginContainerItem.appendChild(statusMessageContainer);
-  pluginContainerItem.appendChild(imgLogo);
-
-  // :: Checking if build instante
-  const buildInstance = data?.build_instance_url;
-
-  if (!buildInstance) {
-    pluginButton.classList.add('disabled');
-    pluginButton.disabled = true;
-    statusMessageContainer.classList.add('active');
-    statusMessageContainer.innerText =
-      "Can't find build instance url. Check the plugin settings.";
-  }
-
-  return pluginContainerItem;
 };
 
 export const handlePanelPlugin = (
-  { contentType, contentObject, userPlugins },
+  { contentType, contentObject, create, duplicate },
+  getPluginSettings,
   pluginInfo,
 ) => {
-  const netlifySettings = userPlugins?.find(
-    ({ id }) => id === pluginInfo.id,
-  )?.settings;
+  const netlifySettings = getPluginSettings();
 
   if (!netlifySettings) return null;
+  const settings = JSON.parse(netlifySettings);
 
-  const settingsForCtd = JSON.parse(netlifySettings)?.builds?.filter(
+  const settingsForCtd = settings?.builds?.filter(
     (plugin) =>
       plugin.content_types.length === 0 ||
       plugin.content_types.find((ctd) => ctd === contentType?.name),
   );
 
   if (!settingsForCtd.length) return null;
+  const isCreating = duplicate || create;
 
   const cacheKey = `${pluginInfo.id}-${contentType?.name}-${
-    contentObject?.id || 'new'
+    isCreating ? contentObject?.id : 'new'
   }`;
 
   let pluginContainer = getCachedElement(cacheKey)?.element;
 
   if (!pluginContainer) {
-    pluginContainer = document.createElement('div');
-    pluginContainer.classList.add('plugin-dn-container');
-
-    const headerElement = document.createElement('span');
-    headerElement.classList.add('plugin-dn-header');
-    headerElement.id = 'plugin-dn-header';
-    headerElement.innerText = 'Netlify Builds';
-
-    pluginContainer.appendChild(headerElement);
-
-    const items = settingsForCtd.map((item) => itemNetlify(item));
-    pluginContainer.append(...items);
-
-    addElementToCache(pluginContainer, cacheKey);
+    pluginContainer = createPanelElement(cacheKey);
   }
+
+  updatePanelElement(
+    pluginContainer,
+    settingsForCtd,
+    contentObject,
+    isCreating,
+  );
 
   return pluginContainer;
 };

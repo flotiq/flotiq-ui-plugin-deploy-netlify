@@ -1,6 +1,5 @@
-/* Section Container */
-
-.plugin-dn-container {
+/* Panel Container */
+.plugin-deploy-netlify {
   background: white;
   display: flex;
   flex-direction: column;
@@ -8,103 +7,103 @@
   border-radius: 0.5rem;
 }
 
-.plugin-dn-container-item {
+.plugin-deploy-netlify__item {
   display: flex;
   flex-direction: column;
   padding: 0 20px;
 }
 
-/* Section Header */
-
-.plugin-dn-header {
+/* Panel Header */
+.plugin-deploy-netlify__header {
   font-weight: 700;
   font-size: 16px;
+  margin-bottom: 1rem;
 }
 
-/* Section Button */
-
-.plugin-dn-button {
+/* Panel Button */
+.plugin-deploy-netlify__button {
   text-align: center;
   border: 2px solid rgb(0, 199, 183);
-  margin: 20px 0px 10px 0px;
+  border-radius: 0.5rem;
+  margin: 5px 0px 10px 0px;
   cursor: pointer;
   padding: 5px 20px;
+  position: relative;
 }
 
-.plugin-dn-button.disabled {
-  border-color: silver;
-  opacity: 0.6;
-  cursor: auto;
-}
-
-.plugin-dn-button:hover {
+.plugin-deploy-netlify__button:hover {
   opacity: 0.8;
 }
 
-.plugin-dn-button.disabled {
+.plugin-deploy-netlify__button[disabled] {
   border-color: silver;
-  opacity: 0.6;
+  opacity: 0.3;
   cursor: auto;
+  pointer-events: none;
+  position: relative;
 }
 
-/* Section Logo */
+.plugin-deploy-netlify__button.plugin-deploy-netlify__button--loading:after {
+  content: ' ';
+  border: 2px solid #f3f3f3;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 2px solid #0083fc;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 10px;
+}
 
-.plugin-dn-logo {
+/* Panel Logo */
+.plugin-deploy-netlify__logo {
   width: 90px;
+  margin-top: 5px;
   margin-left: auto;
   pointer-events: none;
-  content: url('https://api.flotiq.com/image/0x0/_media-84001101-c254-4879-b77f-cc47ff9b0051.png');
+  content: url('../../img/netlify-logo-black.png');
 }
 
-/* Section Status Message */
-
-.plugin-dn-status-message {
+/* Panel Button Status Message */
+.plugin-deploy-netlify__status-message {
   font-size: 12px;
   color: rgb(134, 134, 134);
   margin-bottom: 10px;
-  display: none;
 }
 
-.plugin-dn-status-message.active {
-  display: block;
-}
-
-/* Section Link Preview */
-.plugin-dn-link {
+/* Panel Button Link Preview */
+.plugin-deploy-netlify__link {
   color: -webkit-link;
   cursor: pointer;
   text-decoration: underline;
 }
 
-.plugin-dn-link:hover {
+.plugin-deploy-netlify__link:hover {
   opacity: 0.8;
 }
 
 /* Theme: dark */
-.mode-dark .plugin-dn-container {
+.mode-dark .plugin-deploy-netlify {
   background: #020617;
 }
 
-.mode-dark .plugin-dn-header {
+.mode-dark .plugin-deploy-netlify__header {
   color: white;
 }
 
-.mode-dark plugin-dn-button {
+.mode-dark .plugin-deploy-netlify__button {
   color: white;
 }
 
-.mode-dark .plugin-dn-button {
-  color: white;
-}
-
-.mode-dark .plugin-dn-link {
+.mode-dark .plugin-deploy-netlify__link {
   color: #0083fc;
 }
 
-.mode-dark .plugin-dn-status-message {
+.mode-dark .plugin-deploy-netlify__status-message {
   color: #e3e3e3;
 }
 
-.mode-dark .plugin-dn-logo {
-  content: url('https://api.flotiq.com/image/0x0/_media-087ddee7-4769-495a-89e0-43d539206922.png');
+.mode-dark .plugin-deploy-netlify__logo {
+  content: url('../../img/netlify-logo-white.png');
 }
