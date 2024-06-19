@@ -12,7 +12,7 @@ export const handleManagePlugin = (
 
   const ctds = (contentTypes || [])
     .filter((ctd) => !ctd.internal || ctd.name === '_media')
-    .map(({ name }) => name);
+    .map(({ name, label }) => ({ value: name, label }));
 
   configCache = {};
 

@@ -29,7 +29,6 @@ export function getSettingsSchema(pluginInfo, ctds) {
                   },
                   content_types: {
                     type: 'array',
-                    minLength: 1,
                   },
                   displayName: {
                     type: 'string',
@@ -76,10 +75,12 @@ export function getSettingsSchema(pluginInfo, ctds) {
               content_types: {
                 label: 'Content types',
                 unique: false,
-                options: ctds,
-                helpText: '',
+                helpText:
+                  'If the content types are not selected, the button will be shown when editing each content object.',
                 inputType: 'select',
                 isMultiple: true,
+                useOptionsWithLabels: true,
+                optionsWithLabels: ctds,
               },
               displayName: {
                 label: 'Display name',
