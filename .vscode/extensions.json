@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    // code quality plugins
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+
+    // plugin that helps with html strings in js files
+    "tobermory.es6-string-html" 
+  ]
+}

@@ -21,27 +21,29 @@ export const onBuildHandler = (buttonSettings, contentObject, id) => {
 
   const statusMessageContainer = document.getElementById(statusBoxId);
   const buttonElement = document.getElementById(buttonId);
-  buttonElement.classList.add('loading');
 
-  const writeStatus = (message) => {
+  const updateStatus = (message) => {
     statusMessageContainer.innerHTML = message;
   };
 
-  const pluginLink = `
+  const pluginLink = /* html */ `
     <a 
-      class="plugin-dn-link" 
+      class="plugin-deploy-netlify__link" 
       href="${buildInstance}" 
       target="_blank">
         Go to page: ${buildInstance}
-    </a>`;
+    </a>
+  `;
 
   if (!buildWebhookURL) {
-    writeStatus(pluginLink);
+    updateStatus(pluginLink);
     return;
   } else {
-    writeStatus('Updating preview link...');
+    updateStatus('Updating preview link...');
   }
 
+  buttonElement.disabled = true;
+  buttonElement.classList.add('plugin-deploy-netlify__button--loading');
   return fetch(buildWebhookURL, {
     mode: 'no-cors',
     method: 'POST',
@@ -50,16 +52,16 @@ export const onBuildHandler = (buttonSettings, contentObject, id) => {
       'content-type': 'application/json;charset=UTF-8',
     },
   })
-    .then(() => {
-      writeStatus(pluginLink);
-      buttonElement.classList.remove('loading');
-    })
+    .then(() => updateStatus(pluginLink))
     .catch((error) => {
       if (error.message) {
-        writeStatus(error.message);
+        updateStatus(error.message);
       } else {
-        writeStatus('Failed to fetch');
+        updateStatus('Failed to fetch');
       }
-      buttonElement.classList.remove('loading');
+    })
+    .finally(() => {
+      buttonElement.disabled = false;
+      buttonElement.classList.remove('plugin-deploy-netlify__button--loading');
     });
 };

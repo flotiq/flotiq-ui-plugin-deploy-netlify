@@ -2,69 +2,55 @@ import {
   addElementToCache,
   getCachedElement,
 } from '../../common/plugin-element-cache';
-import { getKeyPattern } from '../../common/plugin-helpers';
+import { createNetlifyItem, updateNetlifyItem } from './panel-button';
 
-import { onBuildHandler } from '../build-handler';
+const createPanelElement = (cacheKey) => {
+  const panelElement = document.createElement('div');
+  panelElement.classList.add('plugin-deploy-netlify');
+  panelElement.id = cacheKey;
+  panelElement.innerHTML = /*html*/ `
+    <span id="plugin-deploy-netlify__header" class="plugin-deploy-netlify__header">
+      Netlify builds
+    </span>
+    <div class="plugin-deploy-netlify__button-list"></div>
+    <img class="plugin-deploy-netlify__logo" alt="Logo Netlify">
+  `;
 
-const itemNetlify = (buttonSettings, contentObject, id, isCreating) => {
-  const buildInstance = getKeyPattern(
-    buttonSettings?.build_instance_url,
-    contentObject,
+  addElementToCache(panelElement, cacheKey);
+
+  return panelElement;
+};
+
+const updatePanelElement = (
+  pluginContainer,
+  settingsForCtd,
+  contentObject,
+  isCreating,
+) => {
+  const buttonList = pluginContainer.querySelector(
+    '.plugin-deploy-netlify__button-list',
   );
-  const buttonLabel = getKeyPattern(
-    buttonSettings?.displayName || 'Build site',
-    contentObject,
-  );
+  settingsForCtd.forEach((buttonSettings, index) => {
+    const itemUniqueID = `netlify-item-child-${index}`;
+    let htmlItem = buttonList.children[index];
+    if (!htmlItem) {
+      htmlItem = createNetlifyItem(itemUniqueID);
+      buttonList.appendChild(htmlItem);
+    }
+    updateNetlifyItem(
+      htmlItem,
+      buttonSettings,
+      contentObject,
+      itemUniqueID,
+      isCreating,
+    );
+    return htmlItem;
+  });
 
-  const pluginContainerItem = document.createElement('div');
-  pluginContainerItem.classList.add('plugin-dn-container-item');
-
-  // :: Status
-  const statusMessageContainer = document.createElement('div');
-  statusMessageContainer.id = `${id}-status`;
-  statusMessageContainer.classList.add('plugin-dn-status-message');
-
-  // :: Button
-  const pluginButton = document.createElement('button');
-  pluginButton.id = `${id}-button`;
-  pluginButton.classList.add('plugin-dn-button');
-  pluginButton.innerText = buttonLabel;
-  pluginButton.onclick = () =>
-    onBuildHandler(buttonSettings, contentObject, id);
-
-  // :: Button disabled status
-  if (isCreating) {
-    pluginButton.classList.add('disabled');
-  } else {
-    pluginButton.classList.remove('disabled');
+  // Remove unnecessary items
+  while (settingsForCtd.length < buttonList.children.length) {
+    buttonList.children[buttonList.children.length - 1].remove();
   }
-
-  // :: Message
-  if (buildInstance && !isCreating) {
-    statusMessageContainer.innerHTML = `
-      <a 
-        class="plugin-dn-link" 
-        href="${buildInstance}" 
-        target="_blank">
-          Go to page: ${buildInstance}
-      </a>`;
-  }
-
-  // :: Append new elements
-  pluginContainerItem.appendChild(pluginButton);
-  pluginContainerItem.appendChild(statusMessageContainer);
-
-  // :: Checking if build instance
-
-  if (!buildInstance) {
-    pluginButton.classList.add('disabled');
-    pluginButton.disabled = true;
-    statusMessageContainer.classList.add('active');
-    statusMessageContainer.innerText =
-      "Can't find build instance url. Check the plugin settings.";
-  }
-
-  return pluginContainerItem;
 };
 
 export const handlePanelPlugin = (
@@ -92,33 +78,16 @@ export const handlePanelPlugin = (
 
   let pluginContainer = getCachedElement(cacheKey)?.element;
 
-  if (!pluginContainer || isCreating) {
-    pluginContainer = document.createElement('div');
-    pluginContainer.classList.add('plugin-dn-container');
-
-    const headerElement = document.createElement('span');
-    headerElement.classList.add('plugin-dn-header');
-    headerElement.id = 'plugin-dn-header';
-    headerElement.innerText = 'Netlify Builds';
-
-    pluginContainer.appendChild(headerElement);
-    addElementToCache(pluginContainer, cacheKey);
-
-    // Case: disable buttons on create item
-    const items = settingsForCtd.map((item, index) => {
-      const itemUniqueID = `netlify-item-child-${index}`;
-      return itemNetlify(item, contentObject, itemUniqueID, isCreating);
-    });
-
-    pluginContainer.append(...items);
-
-    const imgLogo = document.createElement('img');
-    imgLogo.classList.add('plugin-dn-logo');
-
-    imgLogo.alt = 'Logo Netlify';
-
-    pluginContainer.appendChild(imgLogo);
+  if (!pluginContainer) {
+    pluginContainer = createPanelElement(cacheKey);
   }
+
+  updatePanelElement(
+    pluginContainer,
+    settingsForCtd,
+    contentObject,
+    isCreating,
+  );
 
   return pluginContainer;
 };
