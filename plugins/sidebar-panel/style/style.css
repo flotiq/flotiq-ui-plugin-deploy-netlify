@@ -62,7 +62,7 @@
   margin-top: 5px;
   margin-left: auto;
   pointer-events: none;
-  content: url('https://api.flotiq.com/image/0x0/_media-84001101-c254-4879-b77f-cc47ff9b0051.png');
+  content: url('../../img/netlify-logo-black.png');
 }
 
 /* Panel Button Status Message */
@@ -105,5 +105,5 @@
 }
 
 .mode-dark .plugin-deploy-netlify__logo {
-  content: url('https://api.flotiq.com/image/0x0/_media-087ddee7-4769-495a-89e0-43d539206922.png');
+  content: url('../../img/netlify-logo-white.png');
 }
