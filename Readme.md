@@ -1,3 +1,7 @@
+<a href="https://flotiq.com/">
+  <img src="https://editor.flotiq.com/fonts/fq-logo.svg" alt="Flotiq logo" title="Flotiq" align="right" height="60" />
+</a>
+
 # About plugin
 
 Netlify is the platform for building highly-performant and dynamic websites, e-commerce stores and web applications. With this plugin, you can easily trigger Netlify builds within Content Object changes on form submission. You will also be able to quickly navigate to your Netlify pages from the Flotiq content editor.
@@ -40,7 +44,7 @@ Other fields:
 
 Dev environment is configured to use:
 
-* `prettier` - best used with automatic format on save in IDE
+* `prettier` - best used with automatic format on save in IDE, remember to run `yarn format` before commiting changes
 * `eslint` - it is built into both `start` and `build` commands
 
 ## Output
@@ -81,3 +85,9 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 1. Open Flotiq editor
 2. Add a new plugin and paste the URL to the hosted `plugin-manifest.json` file
 3. Navigate to the view that is modified by the plugin
+
+## Collaborating
+
+If you wish to talk with us about this project, feel free to hop on our [![Discord Chat](https://img.shields.io/discord/682699728454025410.svg)](https://discord.gg/FwXcHnX).
+
+If you found a bug, please report it in [issues](https://github.com/flotiq/flotiq-ui-plugin-templates-plain-js/issues).
