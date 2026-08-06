@@ -90,4 +90,4 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 
 If you wish to talk with us about this project, feel free to hop on our [![Discord Chat](https://img.shields.io/discord/682699728454025410.svg)](https://discord.gg/FwXcHnX).
 
-If you found a bug, please report it in [issues](https://github.com/flotiq/flotiq-ui-plugin-templates-plain-js/issues).
+If you found a bug, please report it in [issues](https://github.com/flotiq/flotiq-ui-plugin-deploy-netlify/issues).
