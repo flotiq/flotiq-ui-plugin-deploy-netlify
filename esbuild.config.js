@@ -125,20 +125,10 @@ if (watch) {
   console.log('Watching for changes...');
   context.watch();
 
-  const {
-    hosts,
-    host: singleHost,
-    port,
-  } = await context.serve({
+  const { host, port } = await context.serve({
     servedir: 'dist',
     port: 3050,
   });
-
-  const host =
-    singleHost ??
-    hosts?.find((h) => h === '127.0.0.1') ??
-    hosts?.[0] ??
-    'localhost';
 
   const headers = {
     'access-control-allow-origin': '*' /* @dev First, read about security */,

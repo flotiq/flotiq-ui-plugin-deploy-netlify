@@ -1,9 +1,9 @@
-# Changelog
+# CHANGELOG
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.2.0]
 
@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dependabot
 - Flotiq logo and collaboration section in readme
 - License
+- GitHub check actions
 - Changelog
 
 ### Changed
 
 - Updated dependencies
-- Migrated ESLint configuration to flat config
