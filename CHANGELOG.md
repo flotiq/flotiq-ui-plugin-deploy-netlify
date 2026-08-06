@@ -6,14 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ## [1.2.0]
+
 ### Added
-* Issue templates
-* Dependabot
-* Flotiq logo and collaboration section in readme
-* License
-* GitHub check actions
-* Changelog
+
+- Issue templates
+- Dependabot
+- Flotiq logo and collaboration section in readme
+- License
+- GitHub check actions
+- Changelog
 
 ### Changed
-* Updated dependencies
-* Migrated ESLint configuration to flat config
+
+- Updated dependencies
+- Migrated ESLint configuration to flat config
