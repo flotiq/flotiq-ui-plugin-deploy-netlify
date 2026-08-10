@@ -1,3 +1,7 @@
+<a href="https://flotiq.com/">
+  <img src="https://editor.flotiq.com/fonts/fq-logo.svg" alt="Flotiq logo" title="Flotiq" align="right" height="60" />
+</a>
+
 # About plugin
 
 Netlify is the platform for building highly-performant and dynamic websites, e-commerce stores and web applications. With this plugin, you can easily trigger Netlify builds within Content Object changes on form submission. You will also be able to quickly navigate to your Netlify pages from the Flotiq content editor.
@@ -24,8 +28,8 @@ To find `Build Webhook URL` go to `Site Configuration` -> `Build & deploy` -> `B
 
 Other fields:
 
-* `Display name` - Any name that will be displayed on the build button.
-* `Content Type Definition` - Select the content type to display the button only for the specified content type. If the content type is not selected, the button will be shown when editing each content object.
+- `Display name` - Any name that will be displayed on the build button.
+- `Content Type Definition` - Select the content type to display the button only for the specified content type. If the content type is not selected, the button will be shown when editing each content object.
 
 # Development
 
@@ -40,8 +44,8 @@ Other fields:
 
 Dev environment is configured to use:
 
-* `prettier` - best used with automatic format on save in IDE
-* `eslint` - it is built into both `start` and `build` commands
+- `prettier` - best used with automatic format on save in IDE, remember to run `yarn format` before commiting changes
+- `eslint` - it is built into both `start` and `build` commands
 
 ## Output
 
@@ -53,7 +57,7 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 
 ## Loading the plugin
 
-**Warning:** While developing, you can use  `https://localhost:3053/plugin-manifest.json` address to load the plugin manifest. Make sure your browser trusts the local certificate on the latter, to be able to use it e.g. with `https://editor.flotiq.com`
+**Warning:** While developing, you can use `https://localhost:3053/plugin-manifest.json` address to load the plugin manifest. Make sure your browser trusts the local certificate on the latter, to be able to use it e.g. with `https://editor.flotiq.com`
 
 ### URL
 
@@ -63,7 +67,7 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 2. Open Chrome Dev console
 3. Execute the following script
    ```javascript
-   FlotiqPlugins.loadPlugin('plugin-id', '<URL TO COMPILED JS>')
+   FlotiqPlugins.loadPlugin('plugin-id', '<URL TO COMPILED JS>');
    ```
 4. Navigate to the view that is modified by the plugin
 
@@ -71,7 +75,7 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 
 1. Open Flotiq editor
 2. Open Chrome Dev console
-3. Paste the content of `dist/index.js` 
+3. Paste the content of `dist/index.js`
 4. Navigate to the view that is modified by the plugin
 
 ### Deployment
@@ -81,3 +85,9 @@ The plugins are built into a single `dist/index.js` file. The manifest is copied
 1. Open Flotiq editor
 2. Add a new plugin and paste the URL to the hosted `plugin-manifest.json` file
 3. Navigate to the view that is modified by the plugin
+
+## Collaborating
+
+If you wish to talk with us about this project, feel free to hop on our [![Discord Chat](https://img.shields.io/discord/682699728454025410.svg)](https://discord.gg/FwXcHnX).
+
+If you found a bug, please report it in [issues](https://github.com/flotiq/flotiq-ui-plugin-deploy-netlify/issues).
